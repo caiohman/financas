@@ -1,0 +1,92 @@
+
+.root {
+	-fx-background-image: url("money.png");
+	-fx-background-color: lightcyan;
+	-fx-background-position: center center;
+	-fx-background-size: 50%;
+	-fx-background-repeat: no-repeat;
+}
+
+#title-text{
+	-fx-font-size: 32px;
+ 	-fx-font-family: "Arial Black";
+ 	-fx-fill: #818181;
+ 	-fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );
+}
+
+#label-text{
+	-fx-font-size: 20px;
+ 	-fx-font-family: "Acme";
+}
+
+#button-text-add{
+	-fx-min-width: 25px;
+	-fx-background-image: url('plus.png');
+	-fx-background-radius: 100%;
+	-fx-background-size: cover;
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+
+}
+#button-text-sub{
+	-fx-min-width: 25px;
+	-fx-background-image: url('minus.png');
+	-fx-background-radius: 100%;
+	-fx-background-size: cover;
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+}
+
+#upperButton-text{
+    -fx-font-size: 11px;
+    -fx-font-family: "Arial";
+    -fx-border-radius: 20;
+}
+
+#side-search-button{
+	-fx-min-width: 25px;
+	-fx-background-image: url('lupa.png');
+	-fx-background-radius: 100%;
+	-fx-background-size: cover;
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+}
+
+#side-transfer-button{
+	-fx-min-width: 25px;
+	-fx-background-image: url('transfer.png');
+	-fx-background-radius: 100%;
+	-fx-background-size: cover;
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+}
+
+#bank-buttons{
+	-fx-border-color: transparent ;
+	-fx-background-color: #336699;
+	-fx-text-fill: white;
+
+}
+
+#bank-buttons:hover{
+-fx-opacity: 0.8;
+}
+
+#button-text-add:hover , #button-text-sub:hover , #side-search-button:hover , #side-transfer-button:hover{
+	-fx-scale-y: 1.2;
+	-fx-scale-x: 1.2;
+}
+
+#history-text-area .content{
+	-fx-background-color: #F4FFFF ;
+}
+
+#history-text-area {
+	-fx-background-color: transparent ;
+	-fx-font-size: 12px;
+}
+
+
+#set-border{
+	-fx-grid-lines-visible: true;
+}
