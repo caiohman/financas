@@ -24,10 +24,17 @@ public class Messages{
                                      "que deseja adicionar ou remover do SALDO \n" +
                                      "E depois clique aqui" ;
 
+  private String errorMsgOne = "Valor inválido. Por favor, informe um valor válido";
+
+  private String errorMsgTwo = "Valor inválido." +
+                               "\nCerifique-se de colocar no formato 0.0";
+
   public String getButtonAddMsg(){ return buttonAddMsg; }
   public String getButtonSubMsg(){ return buttonSubMsg; }
   public String getButtonAddCompMsg(){ return buttonAddCompMsg; }
   public String getButtonASubCompMsg(){ return buttonSubCompMsg; }
   public String getButtonTransferMsg(){ return buttonTransferMsg; }
+  public String getErrorMsgOne(){ return errorMsgOne;}
+  public String getErrorMsgTwo(){ return errorMsgTwo;}  
 
 }

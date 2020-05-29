@@ -6,22 +6,21 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.geometry.*;
 import javafx.scene.control.*;
-import javafx.scene.text.*;
+import javafx.scene.text.Text;
 import javafx.scene.shape.Circle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.TableCell;
 import javafx.util.Callback;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.TextArea;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.HPos;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -402,6 +401,31 @@ public class Telas{
         Button histAllBtn = new Button("Histórico");
         histAllBtn.setPrefSize(90, 20);
         histAllBtn.setId("bank-buttons");
+        histAllBtn.setOnAction((event) -> {
+          String text = "";
+          ArrayList<CaixaInfo> historyData = conn.queryCaixaTable();
+          int length = historyData.size();
+
+          for(int i = 0 ; i < length ; i++){
+            text = text + historyData.get(i).getTime()
+            + "    R$" + historyData.get(i).getMod().toString() + "\n"
+            + historyData.get(i).getDescript() + "\n\n";
+          }
+
+          Dialog dialog = new Dialog();
+          dialog.setTitle("Histórico");
+          dialog.setHeaderText("HISTÓRICO");
+          TextArea textArea = new TextArea();
+          textArea.setEditable(false);
+          textArea.setText(text);
+
+          dialog.getDialogPane().setContent(textArea);
+          dialog.getDialogPane()
+          .getButtonTypes()
+          .add(new ButtonType("Fechar", ButtonBar.ButtonData.CANCEL_CLOSE));
+          dialog.showAndWait();
+        });
+
         Button parceledOut = new Button("Parcelar");
         parceledOut.setPrefSize(90, 20);
         parceledOut.setId("bank-buttons");
@@ -416,9 +440,9 @@ public class Telas{
         vboxTwo.getChildren().addAll(type , graph);
 
         hbox.getChildren().addAll(vboxOne , vboxTwo);
-
-        lastHistory.setText(LastHistoryMessage());
         /*******************************************/
+        lastHistory.setText(LastHistoryMessage());
+
         tableUpdateRequest.addListener(
           new ChangeListener<Boolean>() {
             @Override
@@ -450,18 +474,10 @@ public class Telas{
 
                         lastHistory.setText(LastHistoryMessage());
                     } else { //Dialog
-                        Alert errorAdd = new Alert(Alert.AlertType.ERROR);
-                        errorAdd.setTitle("ERRO");
-                        errorAdd.setHeaderText("Ocorreu um erro na transação");
-                        errorAdd.setContentText("Valor inválido. Por favor, informe um valor válido");
-                        errorAdd.showAndWait();
+                        errorMessages(msg.getErrorMsgOne());
                     }
                 }catch(NumberFormatException ex){
-                    Alert errorAdd = new Alert(Alert.AlertType.ERROR);
-                    errorAdd.setTitle("ERRO");
-                    errorAdd.setHeaderText("Ocorreu um erro na transação");
-                    errorAdd.setContentText("Valor inválido." + "\nCerifique-se de colocar no formato 0.0");
-                    errorAdd.showAndWait();
+                    errorMessages(msg.getErrorMsgTwo());
                 };
             }
         });
@@ -483,33 +499,14 @@ public class Telas{
 
                         lastHistory.setText(LastHistoryMessage());
                     } else { //dialog
-                        Alert errorSub = new Alert(Alert.AlertType.ERROR);
-                        errorSub.setTitle("ERRO");
-                        errorSub.setHeaderText("Ocorreu um erro na transação");
-                        errorSub.setContentText("Valor não inválido. Por favor, informe um valor válido");
-                        errorSub.showAndWait();
+                      errorMessages(msg.getErrorMsgOne());
                     }
                 }catch(NumberFormatException ex){
-                    Alert errorAdd = new Alert(Alert.AlertType.ERROR);
-                    errorAdd.setTitle("ERRO");
-                    errorAdd.setHeaderText("Ocorreu um erro na transação");
-                    errorAdd.setContentText("Valor inválido." + "\nCerifique-se de colocar no formato 0.0");
-                    errorAdd.showAndWait();
+                    errorMessages(msg.getErrorMsgTwo());
                 };
             }
         });
-        histAllBtn.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent event)
-            { //dialog
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Histórico de transações");
-                alert.setHeaderText(null);
-                alert.getDialogPane().setMinSize(500, 500);
-                alert.setContentText("Pera");
-                alert.showAndWait();
-            }
-        });
+
         /************************************************/
         /*              TextFields               */
         layout.add(addValueField , 1 , 3);
@@ -539,6 +536,14 @@ public class Telas{
       + "\n" +
       lHistory.get(lHistory.size() - 1)
       .getDescript();
+    }
+
+    private void errorMessages(String msg){
+      Alert errorSub = new Alert(Alert.AlertType.ERROR);
+      errorSub.setTitle("ERRO");
+      errorSub.setHeaderText("Ocorreu um erro na transação");
+      errorSub.setContentText(msg);
+      errorSub.showAndWait();
     }
 
     /* @Description: save table data*/
