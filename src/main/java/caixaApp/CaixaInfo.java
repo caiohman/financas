@@ -3,6 +3,7 @@ package caixaApp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class CaixaInfo{
   private BigDecimal mod;
@@ -27,5 +28,16 @@ public class CaixaInfo{
     String localDateString = dt
     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
     return localDateString;
+  }
+
+  public int compareDate(String dateTimeBrPattern){
+    try{
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+      LocalDateTime dateTime = LocalDateTime.parse(dateTimeBrPattern, formatter);
+      return dateTime.compareTo(dt);
+    }catch(DateTimeParseException exc){
+      System.out.println(exc.getMessage());
+    }
+    return -100; //error
   }
 }

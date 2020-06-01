@@ -69,7 +69,7 @@
 }
 
 #bank-buttons:hover{
--fx-opacity: 0.8;
+	-fx-opacity: 0.8;
 }
 
 #button-text-add:hover , #button-text-sub:hover , #side-search-button:hover , #side-transfer-button:hover{

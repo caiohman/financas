@@ -24,6 +24,11 @@ public class Messages{
                                      "que deseja adicionar ou remover do SALDO \n" +
                                      "E depois clique aqui" ;
 
+  private String historyInfoMsg = "Coloque a data e o horário\n" +
+                                  "Pode filtra o inicio preechendo só o primeiro campo\n" +
+                                  "Pode filtra o final preechendo só o segundo campo\n" +
+                                  "Pode filtrar ambos preenchendo os respectivos campos";
+
   private String errorMsgOne = "Valor inválido. Por favor, informe um valor válido";
 
   private String errorMsgTwo = "Valor inválido." +
@@ -34,7 +39,9 @@ public class Messages{
   public String getButtonAddCompMsg(){ return buttonAddCompMsg; }
   public String getButtonASubCompMsg(){ return buttonSubCompMsg; }
   public String getButtonTransferMsg(){ return buttonTransferMsg; }
-  public String getErrorMsgOne(){ return errorMsgOne;}
-  public String getErrorMsgTwo(){ return errorMsgTwo;}  
+  public String getErrorMsgOne(){ return errorMsgOne; }
+  public String getErrorMsgTwo(){ return errorMsgTwo; }
+  public String getErorMsgThree(){ return errorMsgThree; }
+  public String getHistoryInfoMsg(){ return historyInfoMsg; }
 
 }

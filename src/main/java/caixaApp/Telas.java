@@ -21,6 +21,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.HPos;
+import javafx.beans.binding.Bindings;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -50,8 +51,8 @@ public class Telas{
         this.login.getStylesheets().add(this.getClass().getResource("/lstyle.css").toExternalForm());
         this.compromissos = new Scene(compScreen() , 753 , 377);
         this.compromissos.getStylesheets().add(this.getClass().getResource("/style.css").toExternalForm());
-        this.signInScene = new Scene(signInScreen(), 753, 377);
-        this.signInScene.getStylesheets().add(this.getClass().getResource("/style.css").toExternalForm());
+      //  this.signInScene = new Scene(signInScreen(), 753, 377);
+      //  this.signInScene.getStylesheets().add(this.getClass().getResource("/style.css").toExternalForm());
         this.principal = new Scene(basicConf(), 753, 377);
         this.principal.getStylesheets().add(this.getClass().getResource("/style.css").toExternalForm());
 
@@ -108,6 +109,7 @@ public class Telas{
         this.signInScene = signInScene;
     }
 
+    /*
     //Sign in screen
     private GridPane signInScreen()
     {
@@ -176,25 +178,24 @@ public class Telas{
             }
         });
         return layout;
-    }
+    }*/
 
     //Tela de login
     private GridPane telaLogin()
     {
         //Variaveis da tela de login
         GridPane layout = new GridPane();
+        //layout.setId("set-border"); // for debug
         Text title = new Text("Bem vindo!");
         title.setId("title-text");
-        Label username = new Label("Login:");
+        Label username = new Label("Login");
         username.setId("label-text");
         TextField userTextField = new TextField();
-        Label passwrd = new Label("Senha:");
+        Label passwrd = new Label("Senha");
         passwrd.setId("label-text");
         PasswordField passwrdField = new PasswordField();
-        Button btnSign = new Button("Sign in");
-        HBox hbBtnSign = new HBox(10);
         Button btnLogin = new Button("Login");
-        HBox hbBtnLogin = new HBox(10);
+        btnLogin.setId("bank-buttons");
 
         //ajustes de tela
         layout.setAlignment(Pos.CENTER);
@@ -206,12 +207,14 @@ public class Telas{
         layout.add(userTextField, 1, 1);
         layout.add(passwrd, 0, 2);
         layout.add(passwrdField, 1, 2);
-        hbBtnSign.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtnLogin.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtnSign.getChildren().add(btnSign);
-        hbBtnSign.getChildren().add(btnLogin);
-        layout.add(hbBtnSign, 1, 4);
-        layout.add(hbBtnLogin, 0, 4);
+        layout.add(btnLogin , 1 , 4);
+        layout.setHalignment(btnLogin , HPos.RIGHT);
+
+        btnLogin.disableProperty().bind( // lock login button while password textfiel is empty
+          Bindings.createBooleanBinding( () ->
+            passwrdField.getText().trim().isEmpty(), passwrdField.textProperty()
+          )
+        );
 
         //Acionamento dos botoes
         btnLogin.setOnAction(new EventHandler<ActionEvent>(){
@@ -244,17 +247,6 @@ public class Telas{
                 }
             }
         });
-
-        btnSign.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent event)
-            {
-                userTextField.clear();
-                passwrdField.clear();
-                primaryStage.setScene(getSignInScene());
-            }
-        });
-
         return layout;
     }
 
@@ -402,24 +394,45 @@ public class Telas{
         histAllBtn.setPrefSize(90, 20);
         histAllBtn.setId("bank-buttons");
         histAllBtn.setOnAction((event) -> {
-          String text = "";
           ArrayList<CaixaInfo> historyData = conn.queryCaixaTable();
-          int length = historyData.size();
 
-          for(int i = 0 ; i < length ; i++){
-            text = text + historyData.get(i).getTime()
-            + "    R$" + historyData.get(i).getMod().toString() + "\n"
-            + historyData.get(i).getDescript() + "\n\n";
-          }
-
-          Dialog dialog = new Dialog();
-          dialog.setTitle("Histórico");
+          Dialog dialog = new Dialog(); // create Dialog box
           dialog.setHeaderText("HISTÓRICO");
+
+          GridPane gridpane = new GridPane();
+          gridpane.setHgap(10);
+          gridpane.setVgap(10);
+
+          TextField fromDate = new TextField();
+          TextField toDate = new TextField();
+
+          Button submit = new Button("filtrar por data"); // button to submit filter
+          histAllBtn.setPrefSize(100, 30);
+          submit.setStyle("-fx-border-color: transparent ;" +
+        	                "-fx-background-color: #336699;" +
+        	                "-fx-text-fill: white; "
+                         );
+          submit.setTooltip(new Tooltip(msg.getHistoryInfoMsg()));
+
           TextArea textArea = new TextArea();
           textArea.setEditable(false);
-          textArea.setText(text);
+          textArea.setText(createText(historyData , null , null));
 
-          dialog.getDialogPane().setContent(textArea);
+          submit.setOnAction((eventt) -> {
+            textArea.clear();
+            textArea.setText(createText(historyData ,
+             fromDate.getText() ,
+             toDate.getText())
+            );
+
+          });
+
+          gridpane.add(fromDate , 0 , 0);
+          gridpane.add(toDate , 1 , 0);
+          gridpane.add(submit , 2 , 0);
+          gridpane.add(textArea , 0 , 1 , 3 , 1);
+
+          dialog.getDialogPane().setContent(gridpane);
           dialog.getDialogPane()
           .getButtonTypes()
           .add(new ButtonType("Fechar", ButtonBar.ButtonData.CANCEL_CLOSE));
@@ -536,6 +549,45 @@ public class Telas{
       + "\n" +
       lHistory.get(lHistory.size() - 1)
       .getDescript();
+    }
+
+    private String createText(ArrayList<CaixaInfo> historyData ,
+     String DateInit , String DateEnd){
+
+      int length = historyData.size();
+      String text = "";
+
+      for(int i = 0 ; i < length ; i++){ // get list and insert into String
+          if(DateInit != null){
+            int diffInit = historyData.get(i).compareDate(DateInit);
+
+            if(DateEnd != null){
+              int diffEnd = historyData.get(i).compareDate(DateEnd);
+
+              if(diffInit != diffEnd &&
+               diffInit <= 0 &&
+               diffEnd >= 0 &&
+               diffInit != -100 && // not error
+               diffEnd != -100) //not error
+               {
+                text = text + historyData.get(i).getTime()
+                + "    R$" + historyData.get(i).getMod().toString() + "\n"
+                + historyData.get(i).getDescript() + "\n\n";
+               }
+            }
+            else if(diffInit <= 0 && diffInit != -100){
+              text = text + historyData.get(i).getTime()
+              + "    R$" + historyData.get(i).getMod().toString() + "\n"
+              + historyData.get(i).getDescript() + "\n\n";
+            }
+
+          } else {
+            text = text + historyData.get(i).getTime()
+            + "    R$" + historyData.get(i).getMod().toString() + "\n"
+            + historyData.get(i).getDescript() + "\n\n";
+          }
+      }
+      return text;
     }
 
     private void errorMessages(String msg){

@@ -16,3 +16,17 @@
 	-fx-font-size: 20px;
  	-fx-font-family: "Acme";
 }
+
+#bank-buttons{
+	-fx-border-color: transparent ;
+	-fx-background-color: #336699;
+	-fx-text-fill: white;
+}
+
+#bank-buttons:hover{
+	-fx-opacity: 0.8;
+}
+
+#set-border{
+	-fx-grid-lines-visible: true;
+}
