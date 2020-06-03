@@ -41,7 +41,7 @@ public class Telas{
     private Messages msg = new Messages();
     /*boolean to check authorization */
     boolean authorization = true;
-
+    /*boolean to check request to insert value from compromissos table to saldo*/
     SimpleBooleanProperty tableUpdateRequest = new SimpleBooleanProperty(false);
 
     //construtor das telas até agora feitas
@@ -242,7 +242,7 @@ public class Telas{
                     Alert errorSub = new Alert(Alert.AlertType.ERROR);
                     errorSub.setTitle("ERRO");
                     errorSub.setHeaderText("Login nao encontrado");
-                    errorSub.setContentText("Por favor, tente novamente ou crie um conta");
+                    errorSub.setContentText("Por favor, tente novamente");
                     errorSub.showAndWait();
                 }
             }
@@ -439,9 +439,30 @@ public class Telas{
           dialog.showAndWait();
         });
 
-        Button parceledOut = new Button("Parcelar");
-        parceledOut.setPrefSize(90, 20);
-        parceledOut.setId("bank-buttons");
+        Button onCredit = new Button("Parcelar");
+        onCredit.setPrefSize(90, 20);
+        onCredit.setId("bank-buttons");
+        onCredit.setOnAction((event) -> {
+          Dialog dialog = new Dialog();
+          dialog.setHeaderText("PARCELAR"); // i can put a picture
+
+          GridPane gridpane = new GridPane();
+          //gridpane.setId("set-border"); // for debug
+          gridpane.setHgap(10);
+          gridpane.setVgap(10);
+
+          /*
+            value , installments , flee, description
+
+          */
+
+          dialog.getDialogPane().setContent(gridpane);
+          dialog.getDialogPane()
+          .getButtonTypes()
+          .add(new ButtonType("Fechar", ButtonBar.ButtonData.CANCEL_CLOSE));
+          dialog.showAndWait();
+        });
+
         Button type = new Button("Categorias");
         type.setPrefSize(90, 20);
         type.setId("bank-buttons");
@@ -449,7 +470,7 @@ public class Telas{
         graph.setPrefSize(90, 20);
         graph.setId("bank-buttons");
 
-        vboxOne.getChildren().addAll(histAllBtn , parceledOut);
+        vboxOne.getChildren().addAll(histAllBtn , onCredit);
         vboxTwo.getChildren().addAll(type , graph);
 
         hbox.getChildren().addAll(vboxOne , vboxTwo);
@@ -593,7 +614,7 @@ public class Telas{
     private void errorMessages(String msg){
       Alert errorSub = new Alert(Alert.AlertType.ERROR);
       errorSub.setTitle("ERRO");
-      errorSub.setHeaderText("Ocorreu um erro na transação");
+      errorSub.setHeaderText("Ocorreu um erro na ação");
       errorSub.setContentText(msg);
       errorSub.showAndWait();
     }
@@ -679,7 +700,6 @@ public class Telas{
         boolean status = tableUpdateRequest.get();
         tableUpdateRequest.set(!status);
       });
-
 
       vbox.getChildren().addAll(transferButton);
       vbox.setAlignment(Pos.CENTER);

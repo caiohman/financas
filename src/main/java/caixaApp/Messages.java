@@ -41,7 +41,6 @@ public class Messages{
   public String getButtonTransferMsg(){ return buttonTransferMsg; }
   public String getErrorMsgOne(){ return errorMsgOne; }
   public String getErrorMsgTwo(){ return errorMsgTwo; }
-  public String getErorMsgThree(){ return errorMsgThree; }
   public String getHistoryInfoMsg(){ return historyInfoMsg; }
 
 }
