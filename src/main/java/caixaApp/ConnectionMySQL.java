@@ -29,6 +29,10 @@ public class ConnectionMySQL {
   private final String MYSQL_USER_PASSWORD = keys.getMysqlUserPassword();
   private final String MYSQL_ADDRESS_PORT = keys.getMysqlAddressPort();
 
+
+    /* @Description: Init connection to db                             */
+    /* @param: none                                                    */
+    /* @Return : none                                                  */
     ConnectionMySQL() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -47,6 +51,9 @@ public class ConnectionMySQL {
       }
     }
 
+    /* @Description: Clear compromissos's table                   */
+    /* @param: none                                               */
+    /* @Return : none                                             */
     public void clearTable(){
       try{
         PreparedStatement clearStatement = conn.prepareStatement(
@@ -60,6 +67,9 @@ public class ConnectionMySQL {
         return;
     }
 
+    /* @Description: Increment id_gen table or just receive value      */
+    /* @param: bolean update asking if need updade or just receive     */
+    /* @Return : actual id                                             */
     public int updateIdTable(boolean update){
       try{
         if(update == true){
@@ -86,6 +96,9 @@ public class ConnectionMySQL {
       return 0; //problem
     }
 
+    /* @Description: Query data from compromissos table                */
+    /* @param: none                                                    */
+    /* @Return : String list of compromissos's table                   */
     public ArrayList<ArrayList<String>> queryFromTableCompromissos(){
       try{
         ArrayList<ArrayList<String>> table = new ArrayList<ArrayList<String>>();
@@ -113,7 +126,7 @@ public class ConnectionMySQL {
         }
 
         int length = dateArray.size();
-        /* selection sort */
+        /* selection sort to organize data*/
         for(int i = 0 ; i < (length - 1) ; i++){
           int lowest = i;
           for(int j = i + i ; j < length ; j++){
@@ -136,8 +149,13 @@ public class ConnectionMySQL {
       }
       return null;
     }
-    /* @Description: set values into table    */
-    /* @return: true if OK and false if not OK */
+
+    /* @Description: set values into table                                    */
+    /* @param: id - String with id number                                     */
+    /*         title - String with title                                      */
+    /*         date - String with date                                        */
+    /*         value - String with money value                                */
+    /* @return: true if OK and false if not OK                                */
     public boolean setToTableCompromissos(String id , String title , String date ,
      String value ){
       boolean check = false;
@@ -164,6 +182,10 @@ public class ConnectionMySQL {
     return check ;
   }
 
+  /* @Description: Set data to Usrs table                          */
+  /* @param: usr - String for user name                            */
+  /*         pwd - password data                                   */
+  /* @Return : String list of compromissos's table                 */
   public void setUsrsTable(String usr , byte [] pwd){
     try{
       PreparedStatement setStatement = conn.prepareStatement(
@@ -179,6 +201,9 @@ public class ConnectionMySQL {
     }
   }
 
+  /* @Description: Query password from Usrs table Specific user          */
+  /* @param: usr - String with user name                                 */
+  /* @Return : password required                                         */
   public byte [] querySpecificPwdUsrs(String usr){
     try{
       byte [] tablePwd = null;
@@ -199,8 +224,15 @@ public class ConnectionMySQL {
     }
     return null;
   }
-  /*only one per user*/
+
+
+  /* @Description: Set to Urss table new hash Salt code                  */
+  /* @param: usr - String with user name                                 */
+  /*          hs - hash                                                  */
+  /* @Return : none                                                      */
   public void setHashSalt(String usr , byte [] hs){
+    /*only one per user*/
+
     try{
       PreparedStatement setStatement = conn.prepareStatement(
       "INSERT INTO usrss(usr , hs) VALUES(? , ?)"
@@ -215,6 +247,9 @@ public class ConnectionMySQL {
     }
   }
 
+  /* @Description: Query hash Salt from Usrss table Specific user          */
+  /* @param: usr - String with user name                                   */
+  /* @Return : hash salt required                                          */
   public byte [] querySpecificHashSalt(String usr){
     try{
       byte [] tableHs = null;
@@ -236,6 +271,9 @@ public class ConnectionMySQL {
     return null;
   }
 
+  /* @Description: Query the last value from column saldo of caixa's table */
+  /* @param: none                                                          */
+  /* @Return : value required or null if failed                            */
   public BigDecimal querySaldo(){
     BigDecimal valueConverted = null;
     float saldo = 0;
@@ -255,6 +293,10 @@ public class ConnectionMySQL {
     return null;
   }
 
+  /* @Description: Set data to caixa's table                              */
+  /* @param: value - Float with money to add                              */
+  /*           descript - String with money description                   */
+  /* @Return : value required or null if failed                           */
   public BigDecimal setToCaixa(float value , String descript){
     BigDecimal saldo = querySaldo();
     BigDecimal valueConverted = new BigDecimal(value);
@@ -277,6 +319,9 @@ public class ConnectionMySQL {
     return null;
   }
 
+  /* @Description: Query data to caixa's table                               */
+  /* @param: none                                                            */
+  /* @Return : list of caixa's table if ok and null if failed                */
   public ArrayList<CaixaInfo> queryCaixaTable(){
     ArrayList<CaixaInfo> item = new ArrayList<CaixaInfo>();
 
@@ -300,7 +345,8 @@ public class ConnectionMySQL {
       return null;
   }
 
-    /*@Description: Call this function to check connection*/
-    /* if null - connection failed                        */
+    /* @Description: Call this function to check connection*/
+    /* @param: none                                        */
+    /* @Return: if null - connection failed                */
     public Connection getConnection(){ return conn; }
 }

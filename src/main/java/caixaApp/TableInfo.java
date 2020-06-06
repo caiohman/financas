@@ -13,7 +13,7 @@ public class TableInfo{
     this.value = new SimpleStringProperty(value);
   }
 
-
+  /* Id's setter and getter */
   public void setId(String value) { idProperty().set(value); }
   public String getId() { return idProperty().get(); } /*PropertyValueFactory look for this*/
   public StringProperty idProperty(){
@@ -21,6 +21,7 @@ public class TableInfo{
     return id;
   }
 
+  /* Title's setter and getter */
   public void setTitle(String value) { titleProperty().set(value); }
   public String getTitle() { return titleProperty().get(); } /*PropertyValueFactory look for this*/
   public StringProperty titleProperty(){
@@ -28,6 +29,7 @@ public class TableInfo{
     return title;
   }
 
+  /* Date's setter and getter */
   public void setDate(String value) { dateProperty().set(value); }
   public String getDate() { return dateProperty().get(); } /*PropertyValueFactory look for this*/
   public StringProperty dateProperty(){
@@ -35,6 +37,7 @@ public class TableInfo{
     return date;
   }
 
+  /* Value's setter and getter */
   public void setValue(String value) { valueProperty().set(value); }
   public String getValue() { return valueProperty().get(); } /*PropertyValueFactory look for this*/
   public StringProperty valueProperty(){

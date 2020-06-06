@@ -19,17 +19,24 @@ public class CaixaInfo{
     this.dt = dt;
   }
 
+  /* Getters */
   public BigDecimal getMod(){ return mod; }
   public BigDecimal getBalance(){ return balance; }
   public String getDescript(){return descript;}
   public LocalDateTime getDt(){ return dt; }
 
+  /* @Description: Get date and time                              */
+  /* @param: none                                                 */
+  /* @Return : String with date and time                          */
   public String getTime(){
     String localDateString = dt
     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
     return localDateString;
   }
 
+  /* @Description: Compare Dates                                                 */
+  /* @param: dateTimeBrPattern - date in dd/MM/yyyy HH:mm:ss pattern             */
+  /* @Return : int difference or -100 if error                                   */
   public int compareDate(String dateTimeBrPattern){
     try{
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");

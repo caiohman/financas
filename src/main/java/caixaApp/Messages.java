@@ -34,6 +34,7 @@ public class Messages{
   private String errorMsgTwo = "Valor inválido." +
                                "\nCerifique-se de colocar no formato 0.0";
 
+  /* Getters */                             
   public String getButtonAddMsg(){ return buttonAddMsg; }
   public String getButtonSubMsg(){ return buttonSubMsg; }
   public String getButtonAddCompMsg(){ return buttonAddCompMsg; }

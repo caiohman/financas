@@ -44,15 +44,13 @@ public class Telas{
     /*boolean to check request to insert value from compromissos table to saldo*/
     SimpleBooleanProperty tableUpdateRequest = new SimpleBooleanProperty(false);
 
-    //construtor das telas até agora feitas
+
     public Telas(Stage primaryStage)
     {
         this.login = new Scene(telaLogin(), 753, 377);
         this.login.getStylesheets().add(this.getClass().getResource("/lstyle.css").toExternalForm());
         this.compromissos = new Scene(compScreen() , 753 , 377);
         this.compromissos.getStylesheets().add(this.getClass().getResource("/style.css").toExternalForm());
-      //  this.signInScene = new Scene(signInScreen(), 753, 377);
-      //  this.signInScene.getStylesheets().add(this.getClass().getResource("/style.css").toExternalForm());
         this.principal = new Scene(basicConf(), 753, 377);
         this.principal.getStylesheets().add(this.getClass().getResource("/style.css").toExternalForm());
 
@@ -109,78 +107,9 @@ public class Telas{
         this.signInScene = signInScene;
     }
 
-    /*
-    //Sign in screen
-    private GridPane signInScreen()
-    {
-        //Variaveis da tela de criar usuario
-        GridPane layout = new GridPane();
-        Text title = new Text("Criar usuario");
-        Label username = new Label("Username:");
-        TextField userTextField = new TextField();
-        Label password = new Label("Password:");
-        PasswordField passwrdField = new PasswordField();
-        Label confirmPasswrd = new Label("Confirm password:");
-        PasswordField confirPasswordField = new PasswordField();
-        Button btnConfirm = new Button("Confirm");
-        HBox hbBtnConfirm = new HBox(10);
-        Button btnReturn = new Button("Return");
-        HBox hbBtnReturn = new HBox(10);
-        Label label = new Label("Usuário: ");
-        ToggleGroup group = new ToggleGroup();
-        RadioButton admBtn = new RadioButton("Administrador");
-        admBtn.setToggleGroup(group);
-        RadioButton normalBtn = new RadioButton("Normal");
-        normalBtn.setToggleGroup(group);
-        HBox hbRadioBtn = new HBox();
-
-        //Ajustes na tela
-        layout.setAlignment(Pos.CENTER);
-        layout.setHgap(10);
-        layout.setVgap(10);
-        layout.setPadding(new Insets(15, 15, 15, 15));
-        layout.add(title, 0, 0, 2, 1);
-        layout.add(username, 0, 1);
-        layout.add(userTextField, 1, 1);
-        layout.add(password, 0, 2);
-        layout.add(passwrdField, 1, 2);
-        layout.add(confirmPasswrd, 0, 3);
-        layout.add(confirPasswordField, 1, 3);
-        hbBtnConfirm.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtnConfirm.getChildren().add(btnConfirm);
-        layout.add(hbBtnConfirm, 1, 5);
-        hbBtnReturn.setAlignment(Pos.BOTTOM_LEFT);
-        hbBtnReturn.getChildren().add(btnReturn);
-        layout.add(hbBtnReturn, 0, 5);
-        hbRadioBtn.getChildren().addAll(admBtn, normalBtn);
-        layout.add(hbRadioBtn, 1, 4);
-
-        //Acionamento dos botoes
-        btnConfirm.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent event)
-            {
-
-            }
-        });
-        btnReturn.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent event)
-            {
-                userTextField.clear();
-                passwrdField.clear();
-                confirPasswordField.setText("");
-
-                admBtn.setSelected(false);
-                normalBtn.setSelected(false);
-
-                primaryStage.setScene(getLogin());
-            }
-        });
-        return layout;
-    }*/
-
-    //Tela de login
+    /* @Description: Login Screen config           */
+    /* @param: none                                */
+    /* @Return : class with screen config          */
     private GridPane telaLogin()
     {
         //Variaveis da tela de login
@@ -221,15 +150,16 @@ public class Telas{
             @Override
             public void handle(ActionEvent event)
             {
+              //perform user validation
               byte [] usr , usr2;
               user = new User(
                userTextField.getText(),
                passwrdField.getText()
               );
-              byte [] hs = conn.querySpecificHashSalt(user.getLogin());
-              usr = user.hash(hs);
-              usr2 = conn.querySpecificPwdUsrs(user.getLogin());
-              boolean validation = user.comparePasswords(usr , usr2);
+              byte [] hs = conn.querySpecificHashSalt(user.getLogin()); //get hash salt stored
+              usr = user.hash(hs); //perfom hash
+              usr2 = conn.querySpecificPwdUsrs(user.getLogin()); //get user hash stored
+              boolean validation = user.comparePasswords(usr , usr2); //compare to validate
 
               /*clear infos typed*/
               userTextField.clear();
@@ -250,6 +180,9 @@ public class Telas{
         return layout;
     }
 
+    /* @Description: UpperBar to perform Scene Transition           */
+    /* @param: none                                                 */
+    /* @Return : class with UpperBar                                */
     private HBox SceneTransition(){
         HBox hbox = new HBox();
         hbox.setPadding(new Insets(15, 12, 15, 12));
@@ -285,7 +218,9 @@ public class Telas{
         return hbox;
 	 }
 
-    //Tela de transacoes
+   /* @Description: Caixa Screen config           */
+   /* @param: none                                */
+   /* @Return : class with screen config          */
     private GridPane basicConf() {
 
         /* Configura a tela */
@@ -322,7 +257,7 @@ public class Telas{
         /*Adicionar valor*/
         Label addValueText = new Label("Adicionar o valor");
         addValueText.setId("label-text");
-        layout.add(addValueText, 0, 3); /* coluna 0 e linha 2*/
+        layout.add(addValueText, 0, 3); /* column 0 , line 3*/
 
         TextField addValueField = new TextField();
         addValueField.setPromptText("valor X ou X.XX");
@@ -477,7 +412,7 @@ public class Telas{
         /*******************************************/
         lastHistory.setText(LastHistoryMessage());
 
-        tableUpdateRequest.addListener(
+        tableUpdateRequest.addListener( //listener to Compromissos table request to update Caixa
           new ChangeListener<Boolean>() {
             @Override
             public void changed(
@@ -499,9 +434,9 @@ public class Telas{
                         System.out.println("O valor adicionado " + value);
                         balanceValueField.setText(
                          conn.setToCaixa(
-                          value ,
-                          descriptionValueField.getText()
-                        ).toString()
+                            value ,
+                            descriptionValueField.getText()
+                          ).toString()
                         );
                         addValueField.clear(); /*clear editing spaces*/
                         descriptionValueField.clear();
@@ -557,6 +492,9 @@ public class Telas{
         return layout;
     }
 
+    /* @Description: Get last history of Money transation */
+    /* @param: none                                       */
+    /* @Return : last history                             */
     private String LastHistoryMessage(){
       ArrayList<CaixaInfo> lHistory = conn.queryCaixaTable();
       String text;
@@ -572,6 +510,11 @@ public class Telas{
       .getDescript();
     }
 
+    /* @Description: Create filter of history                 */
+    /* @param: historyData - list of all datas                */
+    /*         DateInit - date to init filter                 */
+    /*         DateEnd - date to end filter                   */
+    /* @Return : text with history data filtered              */
     private String createText(ArrayList<CaixaInfo> historyData ,
      String DateInit , String DateEnd){
 
@@ -611,6 +554,9 @@ public class Telas{
       return text;
     }
 
+    /* @Description: Messages that indicates error          */
+    /* @param: msg - String with msg required               */
+    /* @Return : none                                       */
     private void errorMessages(String msg){
       Alert errorSub = new Alert(Alert.AlertType.ERROR);
       errorSub.setTitle("ERRO");
@@ -619,7 +565,9 @@ public class Telas{
       errorSub.showAndWait();
     }
 
-    /* @Description: save table data*/
+    /* @Description: save table data                       */
+    /* @param: infos - list with data to store             */
+    /* @Return : none                                      */
     private void saveTable(ObservableList<TableInfo> infos){
       conn.clearTable();
       int size = infos.size();
@@ -645,6 +593,9 @@ public class Telas{
       return;
     }
 
+    /* @Description: Compromissos's left sideBar           */
+    /* @param: none                                        */
+    /* @Return : class config                              */
     private VBox sideToolbar(){
       VBox vbox = new VBox(20); /* spacing 20*/
 
@@ -681,6 +632,9 @@ public class Telas{
       return vbox;
     }
 
+    /* @Description: Compromissos's right sideBar          */
+    /* @param: none                                        */
+    /* @Return : class config                              */
     private VBox sideToolbarRight(){
       VBox vbox = new VBox(20); /* spacing 20*/
       /* Button to transfer data to caixa's saldo*/
@@ -707,6 +661,9 @@ public class Telas{
       return vbox;
     }
 
+    /* @Description: Itens to add to Compromissos table    */
+    /* @param: none                                        */
+    /* @Return : table data                                */
     private ObservableList<TableInfo> getItems(){
       ObservableList<TableInfo> infos = FXCollections.observableArrayList();
       ArrayList<ArrayList<String>> table = conn.queryFromTableCompromissos();
@@ -729,6 +686,9 @@ public class Telas{
        return infos;
     }
 
+    /* @Description: Compromissos's table config               */
+    /* @param: none                                            */
+    /* @Return : class with table config                       */
     private VBox listId(){
       table = new TableView<TableInfo>();
       table.setEditable(true); // Enable editing
@@ -784,6 +744,9 @@ public class Telas{
       return tableSpace;
     }
 
+    /* @Description: Compromissos's Screen                             */
+    /* @param: none                                                    */
+    /* @Return : class with Compromissos's config                      */
     private GridPane compScreen(){
       GridPane layout = new GridPane();
       layout.setPadding(new Insets(20, 20, 20, 20));
