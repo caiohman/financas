@@ -43,7 +43,8 @@ public class Telas{
     boolean authorization = true;
     /*boolean to check request to insert value from compromissos table to saldo*/
     SimpleBooleanProperty tableUpdateRequest = new SimpleBooleanProperty(false);
-
+    /**/
+    Credit creditPayment;
 
     public Telas(Stage primaryStage)
     {
@@ -342,7 +343,7 @@ public class Telas{
           TextField toDate = new TextField();
 
           Button submit = new Button("filtrar por data"); // button to submit filter
-          histAllBtn.setPrefSize(100, 30);
+          submit.setPrefSize(100, 30);
           submit.setStyle("-fx-border-color: transparent ;" +
         	                "-fx-background-color: #336699;" +
         	                "-fx-text-fill: white; "
@@ -386,10 +387,26 @@ public class Telas{
           gridpane.setHgap(10);
           gridpane.setVgap(10);
 
-          /*
-            value , installments , flee, description
+          ObservableList<String> options = FXCollections.observableArrayList(
+          "Sem juros", "Juros simples", "Juros compostos"
+          );
+          ComboBox<String> comboBox = new ComboBox<String>(options);
+          comboBox.setValue("Opções");
 
-          */
+          comboBox.getSelectionModel().selectedItemProperty().addListener(
+            new ChangeListener<String>(){
+              @Override
+              public void changed(ObservableValue<? extends String> ov,
+              String old_val,
+              String new_val ){
+                if(new_val.equals("Sem juros")){System.out.println("Sem juros");}
+                if(new_val.equals("Juros simples")){System.out.println("Juros simples");}
+                if(new_val.equals("Juros compostos")){System.out.println("Juros compostos");}
+              }
+            }
+          );
+
+          gridpane.add(comboBox, 1, 1);
 
           dialog.getDialogPane().setContent(gridpane);
           dialog.getDialogPane()
