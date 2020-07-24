@@ -352,7 +352,7 @@ public class Telas{
 
           TextArea textArea = new TextArea();
           textArea.setEditable(false);
-          textArea.setText(createText(historyData , null , null));
+          textArea.setText(createText(historyData , "" , ""));
 
           submit.setOnAction((eventt) -> {
             textArea.clear();
@@ -539,10 +539,10 @@ public class Telas{
       String text = "";
 
       for(int i = 0 ; i < length ; i++){ // get list and insert into String
-          if(DateInit != null){
+          if(!DateInit.equals("")){
             int diffInit = historyData.get(i).compareDate(DateInit);
 
-            if(DateEnd != null){
+            if(!DateEnd.equals("")){
               int diffEnd = historyData.get(i).compareDate(DateEnd);
 
               if(diffInit != diffEnd &&
