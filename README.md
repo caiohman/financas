@@ -18,4 +18,23 @@
  - Adobe XD: Para o desenvolvimento do mockup do projeto foi utilizado o Adobe XD. O link para acesso: https://xd.adobe.com/view/46f34b91-8220-41bc-6cf5-fdff538396d2-30c2/
 
 ## Info:
- No arquivo para conexão coloque as informações do seu banco de dados e as suas tabelas. 
+ No arquivo para conexão coloque as informações do seu banco de dados e as suas tabelas.
+ Modelo:
+ Keys.java
+ package caixaApp;
+
+ public class Keys{
+   private final String DATABASE_NAME = "";
+   private final String INSTANCE_CONNECTION_NAME = "";
+   private final String  MYSQL_USER_NAME = "";
+   private final String MYSQL_USER_PASSWORD = "";
+   private final String MYSQL_ADDRESS_PORT = "";
+
+
+   public String getDatabaseName(){return DATABASE_NAME;}
+   public String getInstanceConnName(){return INSTANCE_CONNECTION_NAME;}
+   public String getMysqlUserName(){return MYSQL_USER_NAME;}
+   public String getMysqlUserPassword(){return MYSQL_USER_PASSWORD;}
+   public String getMysqlAddressPort(){return MYSQL_ADDRESS_PORT;}
+
+ }
