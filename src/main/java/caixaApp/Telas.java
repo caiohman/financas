@@ -35,12 +35,16 @@ public class Telas{
     private String loginStr, passwordStr;
     private TableView<TableInfo> table;
     private User user;
-    /*perform connection to db*/
+    /*perform db's operations*/
     private ConnectionMySQL conn = new ConnectionMySQL();
+    private OperationSql opSql = new OperationSql(conn.getConnection());
+    private CRUDSql crud = new CRUDSql(conn.getConnection());
     /*Messages to show*/
     private Messages msg = new Messages();
     /*boolean to check authorization */
     boolean authorization = true;
+    /*boolean to test if it is the first time access*/
+    boolean firstTime = false;
     /*boolean to check request to insert value from compromissos table to saldo*/
     SimpleBooleanProperty tableUpdateRequest = new SimpleBooleanProperty(false);
     /**/
@@ -48,8 +52,29 @@ public class Telas{
 
     public Telas(Stage primaryStage)
     {
+        /*load first screen*/
         this.login = new Scene(telaLogin(), 753, 377);
         this.login.getStylesheets().add(this.getClass().getResource("/lstyle.css").toExternalForm());
+
+        //check if it'isnt the first time
+        //By checking db's tables, if it is the first time, create tables.
+        if(crud.tableExist("usrs") == false){
+          firstTime = true;
+
+          crud.createTables("usrs" , "usr varchar(100) NOT NULL" +
+          ", pwd blob NOT NULL");
+          crud.createTables("usrss" , "usr varchar(100) NOT NULL" +
+          ", hs blob NOT NULL");
+          crud.createTables("compromissos" , "id int(11)" +
+          ", titulo varchar(100) NOT NULL" +
+          ", data date NOT NULL" +
+          ", valor decimal(10,2) NOT NULL");
+          crud.createTables("id_gen" , "id int(100) NOT NULL");
+          crud.createTables("caixa" , "modifica decimal(10,2)" +
+          ", descricao varchar(100)" +
+          ", saldo decimal(10,2)" +
+          ", dt datetime");
+        }
         this.compromissos = new Scene(compScreen() , 753 , 377);
         this.compromissos.getStylesheets().add(this.getClass().getResource("/style.css").toExternalForm());
         this.principal = new Scene(basicConf(), 753, 377);
@@ -157,26 +182,37 @@ public class Telas{
                userTextField.getText(),
                passwrdField.getText()
               );
-              byte [] hs = conn.querySpecificHashSalt(user.getLogin()); //get hash salt stored
-              usr = user.hash(hs); //perfom hash
-              usr2 = conn.querySpecificPwdUsrs(user.getLogin()); //get user hash stored
-              boolean validation = user.comparePasswords(usr , usr2); //compare to validate
+              if(firstTime == true){
+                byte [] salt = user.generateSalt(); // generate hash salt
+                opSql.setHashSalt(user.getLogin() , salt); //store hash salt
+                opSql.setUsrsTable(user.getLogin() , user.hash(salt)); //store hash
 
+                primaryStage.setScene(getPrincipal());
+              }
+              else{
+                byte [] hs = opSql.querySpecificHashSalt(user.getLogin()); //get hash salt stored
+                usr = user.hash(hs); //perfom hash
+                usr2 = opSql.querySpecificPwdUsrs(user.getLogin()); //get user hash stored
+                boolean validation = user.comparePasswords(usr , usr2); //compare to validate
+
+                if(validation == true){
+                  primaryStage.setScene(getPrincipal());
+
+                }
+                else{
+                  Alert errorSub = new Alert(Alert.AlertType.ERROR);
+                  errorSub.setTitle("ERRO");
+                  errorSub.setHeaderText("Login nao encontrado");
+                  errorSub.setContentText("Por favor, tente novamente");
+                  errorSub.showAndWait();
+                }
+
+              }
               /*clear infos typed*/
               userTextField.clear();
               passwrdField.clear();
-
-              if(validation == true)
-                  primaryStage.setScene(getPrincipal());
-                else
-                {
-                    Alert errorSub = new Alert(Alert.AlertType.ERROR);
-                    errorSub.setTitle("ERRO");
-                    errorSub.setHeaderText("Login nao encontrado");
-                    errorSub.setContentText("Por favor, tente novamente");
-                    errorSub.showAndWait();
-                }
             }
+
         });
         return layout;
     }
@@ -212,6 +248,7 @@ public class Telas{
         buttonReturn.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event){
+                if(firstTime == true)  firstTime = false; //to not generate another password
                 primaryStage.setScene(getLogin());
             }
         });
@@ -297,7 +334,7 @@ public class Telas{
 
         TextField balanceValueField = new TextField();
         balanceValueField.setEditable(false);
-        balanceValueField.setText(conn.querySaldo().toString());
+        balanceValueField.setText(opSql.querySaldo().toString());
         /******************************************/
 
         /*****************************************/
@@ -330,7 +367,7 @@ public class Telas{
         histAllBtn.setPrefSize(90, 20);
         histAllBtn.setId("bank-buttons");
         histAllBtn.setOnAction((event) -> {
-          ArrayList<CaixaInfo> historyData = conn.queryCaixaTable();
+          ArrayList<CaixaInfo> historyData = opSql.queryCaixaTable();
 
           Dialog dialog = new Dialog(); // create Dialog box
           dialog.setHeaderText("HISTÓRICO");
@@ -436,7 +473,7 @@ public class Telas{
                  ObservableValue<? extends Boolean> observable,
                  Boolean oldValue, Boolean newValue
             ) {
-                balanceValueField.setText(conn.querySaldo().toString());
+                balanceValueField.setText(opSql.querySaldo().toString());
                 lastHistory.setText(LastHistoryMessage());
             }
           }
@@ -450,7 +487,7 @@ public class Telas{
                     if ( value > 0f) {
                         System.out.println("O valor adicionado " + value);
                         balanceValueField.setText(
-                         conn.setToCaixa(
+                         opSql.setToCaixa(
                             value ,
                             descriptionValueField.getText()
                           ).toString()
@@ -475,7 +512,7 @@ public class Telas{
                     if (value > 0f) {
                         System.out.println("O valor retirado " + value);
                         balanceValueField.setText(
-                        conn.setToCaixa(
+                        opSql.setToCaixa(
                          (value * -1) , /*make it negative*/
                          descriptionValueField.getText()
                         ).toString()
@@ -513,8 +550,9 @@ public class Telas{
     /* @param: none                                       */
     /* @Return : last history                             */
     private String LastHistoryMessage(){
-      ArrayList<CaixaInfo> lHistory = conn.queryCaixaTable();
+      ArrayList<CaixaInfo> lHistory = opSql.queryCaixaTable();
       String text;
+      if(firstTime == true) return "Ainda não há operações";
       return text = "Ultima operação: R$" +
       lHistory.get(lHistory.size() - 1)
       .getMod()
@@ -586,7 +624,7 @@ public class Telas{
     /* @param: infos - list with data to store             */
     /* @Return : none                                      */
     private void saveTable(ObservableList<TableInfo> infos){
-      conn.clearTable();
+      crud.clearTable("compromissos");
       int size = infos.size();
       if(conn.getConnection() != null){  //there is connection
         for( int i = 0 ; i < size - 1 ; i++){ //the last is aways null because it is a new one to write.
@@ -595,7 +633,7 @@ public class Telas{
               infos.get(i).getDate() != null &&
               infos.get(i).getValue() != null
             ){
-              boolean reponse = conn.setToTableCompromissos(
+              boolean reponse = opSql.setToTableCompromissos(
               infos.get(i).getId() ,
               infos.get(i).getTitle() ,
               infos.get(i).getDate() ,
@@ -622,7 +660,7 @@ public class Telas{
       addButton.setId("button-text-add");
       addButton.setOnAction((event) -> {
         boolean update = true;
-        int id = conn.updateIdTable(update);
+        int id = opSql.updateIdTable(update);
         TableInfo newLine = null;
         if( id != 0){
           newLine = new TableInfo(String.valueOf(id) , null , null , null);
@@ -662,7 +700,7 @@ public class Telas{
       transferButton.setOnAction((event) -> {
         ObservableList<TableInfo> commitSelected , allCommits;
         commitSelected = table.getSelectionModel().getSelectedItems();
-        conn.setToCaixa(
+        opSql.setToCaixa(
           Float.parseFloat(commitSelected.get(0).getValue()) ,
           commitSelected.get(0).getTitle()
         );
@@ -683,7 +721,7 @@ public class Telas{
     /* @Return : table data                                */
     private ObservableList<TableInfo> getItems(){
       ObservableList<TableInfo> infos = FXCollections.observableArrayList();
-      ArrayList<ArrayList<String>> table = conn.queryFromTableCompromissos();
+      ArrayList<ArrayList<String>> table = opSql.queryFromTableCompromissos();
       if(table != null ){
         int size = table.size();
         for(int i = 0 ; i < size ; i++){
@@ -692,7 +730,7 @@ public class Telas{
         }
       }
       boolean update = false;
-      int id = conn.updateIdTable(update);
+      int id = opSql.updateIdTable(update);
       if(id != 0){
         infos.add(new TableInfo(String.valueOf(id) , null , null , null)); //create a new one to client edition
       }
