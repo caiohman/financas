@@ -19,7 +19,7 @@ public class CRUDSql{
   /* @Return : none                                             */
   public void clearTable(String table){
     try{
-      PreparedStatement clearStatement = this.conn.prepareStatement(
+      PreparedStatement clearStatement = conn.prepareStatement(
       "TRUNCATE " + table //faster than delete
       );
       clearStatement.executeUpdate();
@@ -33,10 +33,10 @@ public class CRUDSql{
   /* @Description: Update table with values                          */
   /* @param: table name and value                                    */
   /* @Return : none                                                  */
-  public int updateTable(String table , String value){
+  public int updateTable(String tableName , String value){
     try{
         PreparedStatement updateStatement = conn.prepareStatement(
-        "UPDATE " + table + " set " + value
+        "UPDATE " + tableName + " set " + value
         );
         updateStatement.executeUpdate();
         updateStatement.close();
@@ -76,5 +76,20 @@ public class CRUDSql{
       System.out.println("SQLException: " + problem.getMessage());
     }
     return tExists;
-}
+  }
+
+  public int insertOneIntTable(String tableName , String column , int value){
+    try{
+      PreparedStatement setStatement = conn.prepareStatement(
+      "INSERT INTO " + tableName + " (" +
+      column + ") VALUES(?)"
+      );
+      setStatement.setInt(1 , value);
+      setStatement.executeUpdate();
+      setStatement.close();
+    }catch(SQLException problem){
+      System.out.println("SQLException: " + problem.getMessage());
+    }
+    return 0;
+  }
 }

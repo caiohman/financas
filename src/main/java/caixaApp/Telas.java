@@ -70,6 +70,7 @@ public class Telas{
           ", data date NOT NULL" +
           ", valor decimal(10,2) NOT NULL");
           crud.createTables("id_gen" , "id int(100) NOT NULL");
+          crud.insertOneIntTable("id_gen" , "id" , 1);
           crud.createTables("caixa" , "modifica decimal(10,2)" +
           ", descricao varchar(100)" +
           ", saldo decimal(10,2)" +
@@ -552,7 +553,7 @@ public class Telas{
     private String LastHistoryMessage(){
       ArrayList<CaixaInfo> lHistory = opSql.queryCaixaTable();
       String text;
-      if(firstTime == true) return "Ainda não há operações";
+      if(lHistory.isEmpty() == true) return "Ainda não há operações";
       return text = "Ultima operação: R$" +
       lHistory.get(lHistory.size() - 1)
       .getMod()
@@ -722,7 +723,7 @@ public class Telas{
     private ObservableList<TableInfo> getItems(){
       ObservableList<TableInfo> infos = FXCollections.observableArrayList();
       ArrayList<ArrayList<String>> table = opSql.queryFromTableCompromissos();
-      if(table != null ){
+      if(table.isEmpty() == false){
         int size = table.size();
         for(int i = 0 ; i < size ; i++){
           infos.add( new TableInfo(table.get(i).get(0) , table.get(i).get(1) ,

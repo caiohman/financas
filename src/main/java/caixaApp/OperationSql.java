@@ -18,12 +18,12 @@ public class OperationSql{
 
 
  private Connection conn = null;
+ private CRUDSql crud = null;
 
  OperationSql(Connection conn){
    this.conn = conn;
+   crud = new CRUDSql(conn);
  }
-
- private CRUDSql crud = new CRUDSql(conn);
 
   /* @Description: Increment id_gen table or just receive value      */
   /* @param: bolean update asking if need updade or just receive     */
@@ -33,7 +33,6 @@ public class OperationSql{
       if(update == true){
         crud.updateTable("id_gen" , "id = id + 1");
       }
-
       PreparedStatement queryStatement = this.conn.prepareStatement(
       "SELECT id FROM id_gen"
       );
