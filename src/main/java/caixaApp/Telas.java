@@ -371,6 +371,7 @@ public class Telas{
           ArrayList<CaixaInfo> historyData = opSql.queryCaixaTable();
 
           Dialog dialog = new Dialog(); // create Dialog box
+          dialog.initOwner(primaryStage);
           dialog.setHeaderText("HISTÓRICO");
 
           GridPane gridpane = new GridPane();
@@ -418,6 +419,7 @@ public class Telas{
         onCredit.setId("bank-buttons");
         onCredit.setOnAction((event) -> {
           Dialog dialog = new Dialog();
+          dialog.initOwner(primaryStage);
           dialog.setHeaderText("PARCELAR"); // i can put a picture
 
           GridPane gridpane = new GridPane();

@@ -28,7 +28,8 @@ public class ConnectionMySQL {
         }
       try{
           conn = DriverManager.getConnection(
-           "jdbc:mysql://" + MYSQL_ADDRESS_PORT + DATABASE_NAME ,
+           "jdbc:mysql://" +
+           MYSQL_ADDRESS_PORT + DATABASE_NAME + "?autoReconnect=true&useSSL=false" ,
            MYSQL_USER_NAME ,
            MYSQL_USER_PASSWORD
           );
